@@ -1,0 +1,13 @@
+<section class="input">
+  <ion-input 
+    type="text" 
+    [placeholder]="placeholderInput" 
+    fill="outline" 
+    [label]="label" 
+    labelPlacement="floating"
+    [formControl]="formControlInput"
+  />
+  @if (formControlInput.hasError('required') && formControlInput.touched) {
+    <ion-text color="danger">Ce champ est obligatoire</ion-text>
+  }
+  </section>

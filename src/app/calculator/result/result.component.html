@@ -1,0 +1,11 @@
+<div class="result">
+  @if(loadingResult){
+  <div class="spinner-container">
+    <ion-spinner></ion-spinner>
+  </div>
+  } else {
+
+  <span>{{ loveResult.percentage | percentage }}</span>
+  <span>{{ loveResult.result }}</span>
+  }
+</div>
