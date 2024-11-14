@@ -42,11 +42,20 @@ export class HistoryPage implements OnInit {
           text: 'Ok',
           handler: async () => {
             this.service.clear()
-            const toast = await this.toastCtrl.create({
-              message: ' Historique vide',
-              duration: 2000
-            })
-            await toast.present()
+              .pipe(
+                mergeMap(() => this.service.getAll())
+              )
+              .subscribe({
+                next: async res => {
+                  this.history = res
+                  const toast = await this.toastCtrl.create({
+                    message: ' Historique vide',
+                    duration: 2000
+                  })
+                  await toast.present()
+                }
+              })
+
           }
 
         }]
