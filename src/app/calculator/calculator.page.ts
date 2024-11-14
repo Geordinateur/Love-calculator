@@ -24,10 +24,14 @@ export class CalculatorPage implements OnChanges {
   constructor(private service: LoveService) { }
 
   ngOnChanges() {
-    const loveResult = this.service.get(this.id)
-    if(!loveResult) return
-    this.name1 = loveResult.fname
-    this.name2 = loveResult.sname
+    if(!this.id) return
+    this.service.get(this.id).subscribe({
+      next: loveResult => {
+        if(!loveResult) return
+        this.name1 = loveResult.fname
+        this.name2 = loveResult.sname
+      }
+    })
   }
 
   onFormSubmit([name1, name2]: [string, string]) {
@@ -35,7 +39,7 @@ export class CalculatorPage implements OnChanges {
     this.service.calculate(name1, name2).subscribe({
       next: res => this.loveResult = res
     })
-     // Ajouter la recherche dans l'historique
+    // Ajouter la recherche dans l'historique
     this.loadingResult = false;
   }
 

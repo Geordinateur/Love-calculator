@@ -3,6 +3,7 @@ import { LoveResult, LoveService } from '../love.service';
 import { ActionSheetController, AlertController, ModalController, ToastController } from '@ionic/angular';
 import { ResultModalComponent } from './result-modal/result-modal.component';
 import { Router } from '@angular/router';
+import { mergeMap } from 'rxjs';
 
 @Component({
   selector: 'app-history',
@@ -12,6 +13,7 @@ import { Router } from '@angular/router';
 export class HistoryPage implements OnInit {
 
   title = "Historique"
+  history: LoveResult[] = []
 
   constructor(
     private service: LoveService,
@@ -22,11 +24,10 @@ export class HistoryPage implements OnInit {
     private router: Router
   ) { }
 
-  get history() {
-    return this.service.history
-  }
-
   ngOnInit() {
+    this.service.getAll().subscribe({
+      next: res => this.history = res
+    })
   }
 
   async clearHistory() {
@@ -63,7 +64,13 @@ export class HistoryPage implements OnInit {
         },
         {
           text: 'Supprimer',
-          handler: () => this.service.remove(loveResult)
+          handler: () => {
+            this.service.remove(loveResult).pipe(
+              mergeMap(() => this.service.getAll())
+            ).subscribe({
+                next: res => this.history = res
+              })
+          }
         }
       ]
     })

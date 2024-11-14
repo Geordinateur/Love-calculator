@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map, tap } from 'rxjs';
+import { forkJoin, map, mergeMap, tap } from 'rxjs';
+import { ApiService } from './api.service';
 
 export interface LoveResult {
   id: string;
@@ -17,7 +18,9 @@ export class LoveService {
 
   history: LoveResult[] = []
 
-  constructor(private http: HttpClient) { }
+  constructor(
+    private http: HttpClient,
+    readonly api: ApiService) { }
 
   calculate(name1: string, name2: string) {
     const request = this.http.get<LoveResult>(
@@ -37,21 +40,31 @@ export class LoveService {
       // permet d'ajouter un id sur le résultat qui sera
       // nécessaire plus tard
       map(res => ({ ...res, id: Date.now().toString() })),
-      tap(res => this.history.push(res))
+      //tap(res => this.history.push(res))
+      mergeMap(res => this.api.addResult(res))
     );
     return request;
   }
 
   remove(loveResult: LoveResult) {
-    const idx = this.history.indexOf(loveResult)
-    this.history.splice(idx, 1)
+    return this.api.removeResult(loveResult.id)
   }
 
   clear() {
-    this.history = [];
+    return this.api
+    .getAllResults()
+    .pipe(
+        mergeMap(result => {
+          return forkJoin(result.map(r => this.api.removeResult(r.id)))
+        })
+      )
+  }
+
+  getAll() {
+    return this.api.getAllResults();
   }
 
   get(id: string) {
-    return this.history.find(r => r.id === id)
+    return this.api.getOneResult(id)
   }
 }
