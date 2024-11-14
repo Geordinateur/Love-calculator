@@ -1,7 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { map } from 'rxjs';
- 
+import { map, tap } from 'rxjs';
+
 export interface LoveResult {
   id: string;
   fname: string;
@@ -9,14 +9,16 @@ export interface LoveResult {
   percentage: string;
   result: string;
 }
- 
+
 @Injectable({
   providedIn: 'root',
 })
 export class LoveService {
- 
+
+  history: LoveResult[] = []
+
   constructor(private http: HttpClient) { }
- 
+
   calculate(name1: string, name2: string) {
     const request = this.http.get<LoveResult>(
       'https://love-calculator.p.rapidapi.com/getPercentage',
@@ -34,8 +36,22 @@ export class LoveService {
     ).pipe(
       // permet d'ajouter un id sur le résultat qui sera
       // nécessaire plus tard
-      map(res => ({ ...res, id: Date.now().toString() }))
+      map(res => ({ ...res, id: Date.now().toString() })),
+      tap(res => this.history.push(res))
     );
     return request;
+  }
+
+  remove(loveResult: LoveResult) {
+    const idx = this.history.indexOf(loveResult)
+    this.history.splice(idx, 1)
+  }
+
+  clear() {
+    this.history = [];
+  }
+
+  get(id: string) {
+    return this.history.find(r => r.id === id)
   }
 }

@@ -1,0 +1,23 @@
+<ion-header [translucent]="true">
+  <ion-toolbar><ion-title>{{ title }}</ion-title><ion-buttons slot="end">
+    <ion-button (click)="clearHistory()" onkeypress="clearHistory()">
+      <ion-icon slot="icon-only" name="trash-outline">
+      </ion-icon>
+    </ion-button>
+  </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+  <ion-header collapse="condense">
+    <ion-toolbar>
+      <ion-title size="large">history
+      </ion-title>
+    </ion-toolbar>
+  </ion-header>
+  <ion-list>
+  @for(result of history; track result.id) {
+  <app-history-line [loveResult]="result" (actions)="onActions($event)" (clickLine)="onClick($event)"/>
+  }
+</ion-list>
+</ion-content>

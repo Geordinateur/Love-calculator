@@ -1,0 +1,11 @@
+<ion-item>
+  <ion-label (click)="clickLine.emit(loveResult)" onkeypress="clickResult.emit(loveResult)">
+    <h4>{{ loveResult.fname }} - {{ loveResult.sname }}</h4>
+    <p>{{ loveResult.percentage | percentage }}</p>
+  </ion-label>
+  <ion-buttons slot="end">
+    <ion-button (click)="actions.emit(loveResult)" onkeypress="actions.emit(loveResult)">
+      <ion-icon slot="icon-only" name="ellipsis-vertical-outline"></ion-icon>
+    </ion-button>
+  </ion-buttons>
+</ion-item>

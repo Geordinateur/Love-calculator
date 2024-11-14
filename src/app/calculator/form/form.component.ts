@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -6,10 +6,14 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
   templateUrl: './form.component.html',
   styleUrls: ['./form.component.scss'],
 })
-export class FormComponent implements OnInit {
+export class FormComponent implements OnChanges{
 
   @Input({ required: true }) placeholderInput1!: string
   @Input({ required: true }) placeholderInput2!: string
+
+  @Input() name1!: string
+  @Input() name2!: string
+
   @Output() formSubmit = new EventEmitter<[string, string]>()
 
   form = new FormGroup({
@@ -24,7 +28,10 @@ export class FormComponent implements OnInit {
   })
   constructor() { }
 
-  ngOnInit() { }
+  ngOnChanges () {
+    this.form.controls.name1.setValue(this.name1 ?? '')
+    this.form.controls.name2.setValue(this.name2 ?? '')
+  }
 
   submitForm() {
     const {form} = this
